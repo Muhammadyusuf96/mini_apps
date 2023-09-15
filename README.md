@@ -5,12 +5,12 @@ Here I will put small projects.
 ## List of mini projects:
 
 - [ProportionsCalculator](#ProportionsCalculator) - This is a proportions calculator.
-- [DDQRScaner](#DDQRScaner)
+- [DDQRScaner](#DDQRScaner) - QR code scanner
 - [C](#c)
 
 ## ProportionsCalculator
 
-The calculator uses cross multiplication to solve. You must first enter the base ratio in the boxes above the line, then you can enter the unknown. Fields can be automatically added up to 20 when filling in the last field. All calculations will be made relative to the base ratio. All fields are reset when you change the base ratio.
+This is a user-friendly tkinter based GUI calculator designed for performing proportional calculations. Users can input values, and the calculator utilizes cross-multiplication to solve proportional problems. Start by entering the base ratio in the top two fields, then input the unknown value. The calculator can dynamically add up to 20 additional fields when you fill in the last one. All calculations are based on the provided base ratio, and if you change the base ratio, all fields will reset automatically.
 
 ## DDQRScaner
 
