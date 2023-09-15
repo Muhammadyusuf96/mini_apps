@@ -1,3 +1,4 @@
+import itertools
 from tkinter import StringVar
 from tkinter.ttk import Frame, Separator, Entry, Label
 
@@ -25,7 +26,7 @@ class Main(Frame):
         self.master.mainloop()
 
     def calc(self, key):
-        if key != '00' and key != '10':
+        if key not in ['00', '10']:
             obj = self.str_var[key]
             a = self.str_var['00'].get()
             b = self.str_var['10'].get()
@@ -33,14 +34,12 @@ class Main(Frame):
                 val = float(obj.get())
                 if key.startswith('0'):
                     temp = val * float(b) / float(a)
-                    name = '1' + key[1:]
-                    self.calced = self.str_var[name]._name
-                    self.str_var[name].set(temp)
+                    name = f'1{key[1:]}'
                 else:
                     temp = val * float(a) / float(b)
-                    name = '0' + key[1:]
-                    self.calced = self.str_var[name]._name
-                    self.str_var[name].set(temp)
+                    name = f'0{key[1:]}'
+                self.calced = self.str_var[name]._name
+                self.str_var[name].set(temp)
         else:
             if len(self.entries) >= 4:
                 self.reset()
@@ -54,15 +53,14 @@ class Main(Frame):
                     self.str_var.pop(key, None)
                     self.entries[key].destroy()
                     self.entries.pop(key, None)
-                elif key != '00' and key != '10':
+                elif key not in ['00', '10']:
                     self.str_var[key].set('')
         self.calced = ''
 
     def on_change(self, *args):
         name = args[0]
         for key in self.str_var.copy():
-            obj = self.str_var.get(key, None)
-            if obj:
+            if obj := self.str_var.get(key, None):
                 if obj._name == name:
                     temp = self.clear(obj.get())
                     if obj.get() != temp:
@@ -76,7 +74,7 @@ class Main(Frame):
     def clear(self, value):
         value.replace(',', '.')
         if value.startswith('.'):
-            value = '0' + value
+            value = f'0{value}'
         temp = ''
         for val in value:
             if val.isdigit():
@@ -95,38 +93,40 @@ class Main(Frame):
         return temp
 
     def check_for_new_entries(self):
-        t = 0
-        for key in list(self.entries.keys())[-2:]:
-            if self.str_var[key].get() != '':
-                t += 1
+        t = sum(
+            self.str_var[
+                key
+            ].get() != '' for key in list(self.entries.keys())[-2:])
+
         if t >= 2:
             self.add_new_entries()
 
     def basic(self):
-        for row in range(0, 2):
-            for col in range(0, 2):
-                cel = str(col) + str(row)
-                self.str_var[cel] = StringVar()
-                self.entries[cel] = Entry(self, textvariable=self.str_var[cel])
-                self.str_var[cel].trace("w", self.on_change)
-                self.entries[cel].grid(row=row, column=col, padx=(10, 10), pady=(26, 5))
+        for row, col in itertools.product(range(2), range(2)):
+            cel = str(col) + str(row)
+            self.str_var[cel] = StringVar()
+            self.entries[cel] = Entry(self, textvariable=self.str_var[cel])
+            self.str_var[cel].trace("w", self.on_change)
+            self.entries[cel].grid(row=row, column=col, padx=(10, 10), pady=(26, 5))
 
     def add_new_entries(self):
         start = len(self.entries) // 2
         if start <= 20:
-            for row in range(start, start + 1):
-                for col in range(0, 2):
-                    cel = str(col) + str(row)
-                    self.str_var[cel] = StringVar()
-                    self.entries[cel] = Entry(self, textvariable=self.str_var[cel])
-                    self.str_var[cel].trace("w", self.on_change)
-                    self.entries[cel].grid(row=row, column=col, padx=(10, 10), pady=(5, 5))
+            for row, col in itertools.product(range(start, start + 1), range(2)):
+                cel = str(col) + str(row)
+                self.str_var[cel] = StringVar()
+                self.entries[cel] = Entry(self, textvariable=self.str_var[cel])
+                self.str_var[cel].trace("w", self.on_change)
+                self.entries[cel].grid(
+                    row=row, column=col,
+                    padx=(10, 10), pady=(5, 5))
             self.center_window()
 
     def center_window(self):
         self.master.geometry("")
         x = (self.master.winfo_screenwidth() - self.master.winfo_width()) / 2
-        y = (self.master.winfo_screenheight() - self.master.winfo_height()) / 2 - 32
+        y = (
+            self.master.winfo_screenheight() - self.master.winfo_height()) / 2 - 32
         self.master.geometry('+%d+%d' % (x, y))
 
 
