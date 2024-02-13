@@ -1,0 +1,4 @@
+keyboard
+clipboard
+Pillow
+pystray
